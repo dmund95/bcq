@@ -12,7 +12,7 @@ import BCQ
 # Runs policy for X episodes and returns average reward
 def evaluate_policy(policy, eval_episodes=10):
 	avg_reward = 0.
-	for _ in xrange(eval_episodes):
+	for _ in range(eval_episodes):
 		obs = env.reset()
 		done = False
 		while not done:
@@ -22,27 +22,28 @@ def evaluate_policy(policy, eval_episodes=10):
 
 	avg_reward /= eval_episodes
 
-	print "---------------------------------------"
-	print "Evaluation over %d episodes: %f" % (eval_episodes, avg_reward)
-	print "---------------------------------------"
+	print ("---------------------------------------")
+	print ("Evaluation over %d episodes: %f" % (eval_episodes, avg_reward))
+	print ("---------------------------------------")
 	return avg_reward
 
 
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--env_name", default="Hopper-v1")				# OpenAI gym environment name
+	parser.add_argument("--test_name", default="Original")				# Specific Name for AlgoRun
+	parser.add_argument("--env_name", default="Hopper-v2")				# OpenAI gym environment name
 	parser.add_argument("--seed", default=0, type=int)					# Sets Gym, PyTorch and Numpy seeds
 	parser.add_argument("--buffer_type", default="Robust")				# Prepends name to filename.
 	parser.add_argument("--eval_freq", default=5e3, type=float)			# How often (time steps) we evaluate
 	parser.add_argument("--max_timesteps", default=1e6, type=float)		# Max time steps to run environment for
 	args = parser.parse_args()
 
-	file_name = "BCQ_%s_%s" % (args.env_name, str(args.seed))
-	buffer_name = "%s_%s_%s" % (args.buffer_type, args.env_name, str(args.seed))
-	print "---------------------------------------"
-	print "Settings: " + file_name
-	print "---------------------------------------"
+	file_name = "%s_BCQ_%s_%s" % (args.test_name, args.env_name, str(args.seed))
+	buffer_name = "%s_%s_%s_%s" % (args.test_name, args.buffer_type, args.env_name, str(args.seed))
+	print ("---------------------------------------")
+	print ("Settings: " + file_name)
+	print ("---------------------------------------")
 
 	if not os.path.exists("./results"):
 		os.makedirs("./results")
@@ -77,4 +78,4 @@ if __name__ == "__main__":
 		np.save("./results/" + file_name, evaluations)
 
 		training_iters += args.eval_freq
-		print "Training iterations: " + str(training_iters)
+		print ("Training iterations: " + str(training_iters))

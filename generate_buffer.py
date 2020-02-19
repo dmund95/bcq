@@ -11,18 +11,19 @@ import DDPG
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--env_name", default="Hopper-v1")				# OpenAI gym environment name
+	parser.add_argument("--test_name", default="Original")				# Specific Name for AlgoRun
+	parser.add_argument("--env_name", default="Hopper-v2")				# OpenAI gym environment name
 	parser.add_argument("--seed", default=0, type=int)					# Sets Gym, PyTorch and Numpy seeds
 	parser.add_argument("--buffer_size", default=1e5, type=float)		# Max time steps to run environment for
 	parser.add_argument("--noise1", default=0.3, type=float)			# Probability of selecting random action
 	parser.add_argument("--noise2", default=0.3, type=float)			# Std of Gaussian exploration noise
 	args = parser.parse_args()
 
-	file_name = "DDPG_%s_%s" % (args.env_name, str(args.seed))
-	buffer_name = "Robust_%s_%s" % (args.env_name, str(args.seed))
-	print "---------------------------------------"
-	print "Settings: " + file_name
-	print "---------------------------------------"
+	file_name = "%s_DDPG_%s_%s" % (args.test_name, args.env_name, str(args.seed))
+	buffer_name = "%s_Robust_%s_%s" % (args.test_name, args.env_name, str(args.seed))
+	print ("---------------------------------------")
+	print ("Settings: " + file_name)
+	print ("---------------------------------------")
 
 	if not os.path.exists("./buffers"):
 		os.makedirs("./buffers")
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 		if done: 
 
 			if total_timesteps != 0: 
-				print("Total T: %d Episode Num: %d Episode T: %d Reward: %f") % (total_timesteps, episode_num, episode_timesteps, episode_reward)
+				print("Total T: %d Episode Num: %d Episode T: %d Reward: %f" % (total_timesteps, episode_num, episode_timesteps, episode_reward))
 			
 			# Reset environment
 			obs = env.reset()
