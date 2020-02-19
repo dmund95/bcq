@@ -195,3 +195,14 @@ class BCQ(object):
 
 			for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
 				target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
+
+	def save(self, filename, directory):
+		torch.save(self.actor.state_dict(), '%s/%s_actor.pth' % (directory, filename))
+		torch.save(self.critic.state_dict(), '%s/%s_critic.pth' % (directory, filename))
+		torch.save(self.vae.state_dict(), '%s/%s_vae.pth' % (directory, filename))
+
+
+	def load(self, filename, directory):
+		self.actor.load_state_dict(torch.load('%s/%s_actor.pth' % (directory, filename)))
+		self.critic.load_state_dict(torch.load('%s/%s_critic.pth' % (directory, filename)))
+		self.vae.load_state_dict(torch.load('%s/%s_vae.pth' % (directory, filename)))

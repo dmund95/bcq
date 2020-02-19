@@ -61,6 +61,9 @@ if __name__ == "__main__":
 	# Initialize policy
 	policy = BCQ.BCQ(state_dim, action_dim, max_action)
 
+	if os.path.exists("./results/%s_actor.pth" % (file_name)):
+		policy.load(file_name, './results')
+
 	# Load buffer
 	replay_buffer = utils.ReplayBuffer()
 	replay_buffer.load(buffer_name)
@@ -76,6 +79,8 @@ if __name__ == "__main__":
 
 		evaluations.append(evaluate_policy(policy))
 		np.save("./results/" + file_name, evaluations)
+
+		policy.save(file_name, './results')
 
 		training_iters += args.eval_freq
 		print ("Training iterations: " + str(training_iters))

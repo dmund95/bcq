@@ -9,6 +9,23 @@ import DDPG
 
 # Shortened version of code originally found at https://github.com/sfujim/TD3
 
+def evaluate_policy(policy, eval_episodes=10):
+	avg_reward = 0.
+	for _ in range(eval_episodes):
+		obs = env.reset()
+		done = False
+		while not done:
+			action = policy.select_action(np.array(obs))
+			obs, reward, done, _ = env.step(action)
+			avg_reward += reward
+
+	avg_reward /= eval_episodes
+
+	print ("---------------------------------------")
+	print ("Evaluation over %d episodes: %f" % (eval_episodes, avg_reward))
+	print ("---------------------------------------")
+	return avg_reward
+
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
@@ -65,6 +82,9 @@ if __name__ == "__main__":
 			episode_reward = 0
 			episode_timesteps = 0
 			episode_num += 1 
+
+			if total_timesteps > args.start_timesteps:
+				evaluate_policy(policy)
 		
 		# Select action randomly or according to policy
 		if total_timesteps < args.start_timesteps:
