@@ -4,33 +4,16 @@ import gym
 import argparse
 import os
 
-import utils
+from utils import *
 import DDPG
 
 # Shortened version of code originally found at https://github.com/sfujim/TD3
-
-def evaluate_policy(policy, eval_episodes=10):
-	avg_reward = 0.
-	for _ in range(eval_episodes):
-		obs = env.reset()
-		done = False
-		while not done:
-			action = policy.select_action(np.array(obs))
-			obs, reward, done, _ = env.step(action)
-			avg_reward += reward
-
-	avg_reward /= eval_episodes
-
-	print ("---------------------------------------")
-	print ("Evaluation over %d episodes: %f" % (eval_episodes, avg_reward))
-	print ("---------------------------------------")
-	return avg_reward
 
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--test_name", default="Original")				# Specific Name for AlgoRun
-	parser.add_argument("--env_name", default="Hopper-v2")				# OpenAI gym environment name
+	parser.add_argument("--env_name", default="Pendulum-v0")			# OpenAI gym environment name
 	parser.add_argument("--seed", default=0, type=int)					# Sets Gym, PyTorch and Numpy seeds
 	parser.add_argument("--max_timesteps", default=1e6, type=float)		# Max time steps to run environment for
 	parser.add_argument("--start_timesteps", default=1e3, type=int)		# How many time steps purely random policy is run for
@@ -58,11 +41,14 @@ if __name__ == "__main__":
 
 	# Initialize policy and buffer
 	policy = DDPG.DDPG(state_dim, action_dim, max_action)
-	replay_buffer = utils.ReplayBuffer()
+	replay_buffer = ReplayBuffer()
 	
 	total_timesteps = 0
 	episode_num = 0
 	done = True 
+
+	evaluations = []
+	epochs = []
 
 	while total_timesteps < args.max_timesteps:
 		
@@ -76,15 +62,17 @@ if __name__ == "__main__":
 			if total_timesteps % 1e5 == 0:
 				policy.save(file_name, directory="./pytorch_models")
 			
+			if total_timesteps > args.start_timesteps:
+				evaluations.append(evaluate_policy(env, policy))
+				epochs.append(total_timesteps)
+				np.savez("./results/" + file_name, rewards=evaluations, epochs=epochs)
+
 			# Reset environment
 			obs = env.reset()
 			done = False
 			episode_reward = 0
 			episode_timesteps = 0
 			episode_num += 1 
-
-			if total_timesteps > args.start_timesteps:
-				evaluate_policy(policy)
 		
 		# Select action randomly or according to policy
 		if total_timesteps < args.start_timesteps:

@@ -4,7 +4,7 @@ import torch
 import argparse
 import os
 
-import utils
+from utils import *
 import DDPG
 
 
@@ -12,7 +12,7 @@ if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--test_name", default="Original")				# Specific Name for AlgoRun
-	parser.add_argument("--env_name", default="Hopper-v2")				# OpenAI gym environment name
+	parser.add_argument("--env_name", default="Pendulum-v0")			# OpenAI gym environment name
 	parser.add_argument("--seed", default=0, type=int)					# Sets Gym, PyTorch and Numpy seeds
 	parser.add_argument("--buffer_size", default=1e5, type=float)		# Max time steps to run environment for
 	parser.add_argument("--noise1", default=0.3, type=float)			# Probability of selecting random action
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 	policy.load(file_name, "./pytorch_models")
 
 	# Initialize buffer
-	replay_buffer = utils.ReplayBuffer()
+	replay_buffer = ReplayBuffer()
 	
 	total_timesteps = 0
 	episode_num = 0
