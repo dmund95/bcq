@@ -3,7 +3,7 @@ import torch
 import gym
 import argparse
 import os
-
+import time
 from utils import *
 import DDPG
 
@@ -49,13 +49,15 @@ if __name__ == "__main__":
 
 	evaluations = []
 	epochs = []
+	ts = time.time()
 
 	while total_timesteps < args.max_timesteps:
 		
 		if done: 
 
 			if total_timesteps != 0: 
-				print("Total T: %d Episode Num: %d Episode T: %d Reward: %f" % (total_timesteps, episode_num, episode_timesteps, episode_reward))
+				print("Total T: %d Episode Num: %d Episode T: %d Reward: %f TimeElapsed: %f" % (total_timesteps, episode_num, episode_timesteps, episode_reward, time.time() - ts))
+				ts = time.time()
 				policy.train(replay_buffer, episode_timesteps)
 			
 			# Save policy
